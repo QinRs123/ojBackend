@@ -105,7 +105,7 @@ spring:
 
 
 
-![b222722971da273f8d144b7ba8c240d0](imag/b222722971da273f8d144b7ba8c240d0.png)
+![b222722971da273f8d144b7ba8c240d0](imag\b222722971da273f8d144b7ba8c240d0.png)
 
 
 
@@ -136,13 +136,13 @@ http://localhost:8021/doc.html
 
 结果报错
 
-![877e7267d6ba463564eee2e9e852e11b](imag/877e7267d6ba463564eee2e9e852e11b.png)
+![877e7267d6ba463564eee2e9e852e11b](imag\877e7267d6ba463564eee2e9e852e11b.png)
 
 
 
 控制台输出
 
-![005c4fdae0281cf8882ba9666ecb0f5d](imag/005c4fdae0281cf8882ba9666ecb0f5d.png)
+![005c4fdae0281cf8882ba9666ecb0f5d](imag\005c4fdae0281cf8882ba9666ecb0f5d.png)
 
 
 
@@ -247,4 +247,4 @@ https://www.cnblogs.com/blbl-blog/p/18262203
 
 修改结果
 
-![9cfa624bcadc448f03ab25fa7a199d1c](imag/9cfa624bcadc448f03ab25fa7a199d1c.png)
+![9cfa624bcadc448f03ab25fa7a199d1c](imag\9cfa624bcadc448f03ab25fa7a199d1c.png)
