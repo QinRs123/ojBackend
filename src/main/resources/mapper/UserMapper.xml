@@ -18,4 +18,9 @@
         <result column="isDelete" property="isDelete" />
     </resultMap>
 
+
+    <select id="selectPageVo" resultType="com.ojBacked.entity.User">
+        SELECT * from user
+    </select>
+
 </mapper>

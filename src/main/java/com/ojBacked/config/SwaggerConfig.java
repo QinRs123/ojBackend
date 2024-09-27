@@ -13,7 +13,7 @@ public class SwaggerConfig {
     @Bean
     public OpenAPI springShopOpenAPI() {
         return new OpenAPI()
-                .info(new Info().title("标题")
+                .info(new Info().title("后端接口测试工具")
                         .contact(new Contact())
                         .description("我的API文档")
                         .version("v1")

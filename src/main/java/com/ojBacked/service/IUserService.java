@@ -1,7 +1,10 @@
 package com.ojBacked.service;
 
+import com.ojBacked.comment.com.Result;
 import com.ojBacked.entity.User;
 import com.baomidou.mybatisplus.extension.service.IService;
+
+import java.util.List;
 
 /**
  * <p>
@@ -13,4 +16,12 @@ import com.baomidou.mybatisplus.extension.service.IService;
  */
 public interface IUserService extends IService<User> {
 
+
+    Result<String> register();
+
+    Result<List<User>> select(Long current, Long size);
+
+    User userLogin(String userAccount, String userPassword);
+
+    User selectById(Long id);
 }

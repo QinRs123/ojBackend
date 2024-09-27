@@ -247,4 +247,226 @@ https://www.cnblogs.com/blbl-blog/p/18262203
 
 修改结果
 
-![9cfa624bcadc448f03ab25fa7a199d1c](imag\9cfa624bcadc448f03ab25fa7a199d1c.png)
+![9cfa624bcadc448f03ab25fa7a199d1c](imag\\9cfa624bcadc448f03ab25fa7a199d1c.png)
+
+
+
+
+
+## mybatis-plus 分页操作
+
+mybatis 配置类
+
+```java
+@Configuration
+@MapperScan("com.ojBacked.mapper")
+public class MybatisPlusConfig {
+    /**
+     * 添加分页插件
+     */
+    @Bean
+    public MybatisPlusInterceptor mybatisPlusInterceptor() {
+        MybatisPlusInterceptor interceptor = new MybatisPlusInterceptor();
+        interceptor.addInnerInterceptor(new PaginationInnerInterceptor(DbType.MYSQL)); // 如果配置多个插件, 切记分页最后添加
+        // 如果有多数据源可以不配具体类型, 否则都建议配上具体的 DbType
+        return interceptor;
+    }
+}
+
+```
+
+
+
+分页请求需要当前页数current以及每页多少size
+
+```java
+  @GetMapping("/select")
+    public Result<List<User>> select(@PathParam("current") Long current, @PathParam("size") Long size){
+        return userService.select(current,size);
+    }
+```
+
+service层
+
+```java
+    @Override
+    public Result<List<User>> select(Long current, Long size) {
+        Page<User> page=new Page<>();
+        page.setCurrent(current);
+        page.setSize(size);
+
+        List<User> userList = userMapper.selectPageVo(page);
+        if(userList==null){
+            return Result.fail();
+        }
+        return Result.ok(userList);
+    }
+```
+
+mapper 接口
+
+```java
+List<User> selectPageVo(Page<User> page);
+```
+
+mapper.xml 映射文件
+
+```xml
+<select id="selectPageVo" resultType="com.ojBacked.entity.User">
+        SELECT * from user
+    </select>
+```
+
+
+
+
+
+## 自定义响应类
+
+result
+
+```java
+@Data
+@AllArgsConstructor
+@NoArgsConstructor
+public class Result<T> {
+
+    public Integer code;
+    public String msg;
+
+    public T data;
+
+    Result(ResultEnum e){
+        this.code=e.getCode();
+        this.msg=e.getMsg();
+        this.data=null;
+    }
+
+
+    public static Result<String> ok(){
+        return new Result<>(ResultEnum.SUCCESS);
+    }
+
+    public static <T> Result<T> bulid(ResultEnum e, T data){
+        Result result = new Result(e);
+        result.setData(data);;
+        return result;
+    }
+
+    public static <T> Result<T> ok(T data){
+        return bulid(ResultEnum.SUCCESS,data);
+    }
+
+    public static Result fail(){
+        return Result.fail(null);
+    }
+
+    public static<T> Result<T> fail(T data){
+        return bulid(ResultEnum.ERROR,data);
+    }
+
+}
+```
+
+ResultEnum
+
+```java
+public enum ResultEnum {
+
+
+    SUCCESS(200,"操作成功"),
+    ERROR(401, "操作失败");
+
+
+
+
+
+    public Integer getCode() {
+        return code;
+    }
+    public String getMsg() {
+        return msg;
+    }
+    ResultEnum(Integer code, String msg) {
+        this.code = code;
+        this.msg = msg;
+    }
+
+    private final Integer code;
+
+    private final String msg;
+
+}
+
+```
+
+
+
+
+
+## aop + 自定义注解校验
+
+引入依赖
+
+```xml
+    <!--spring aop依赖-->
+    <dependency>
+        <groupId>org.springframework</groupId>
+        <artifactId>spring-aop</artifactId>
+        <version>6.0.2</version>
+    </dependency>
+    <!--spring aspects依赖-->
+    <dependency>
+        <groupId>org.springframework</groupId>
+        <artifactId>spring-aspects</artifactId>
+        <version>6.0.2</version>
+    </dependency>
+```
+
+
+
+自定义注解
+
+```java
+@Target({ElementType.METHOD})
+@Retention(RetentionPolicy.RUNTIME)
+public @interface Guigu {
+}
+```
+
+切面类
+
+```java
+@Aspect
+@Component
+public class GuiguAspect {
+    @Around("execution(* com.ojBacked.controller.*.*(..)) && @annotation(guigu))")
+    public Object login(ProceedingJoinPoint proceedingJoinPoint, Guigu guigu) throws Throwable {
+        //1 获取request对象
+        RequestAttributes attributes = RequestContextHolder.getRequestAttributes();
+        ServletRequestAttributes sra = (ServletRequestAttributes) attributes;
+        HttpServletRequest request = sra.getRequest();
+
+        //2 从请求头获取token
+        String token = request.getHeader("token");
+        //3 判断token是否为空，如果为空，返回登录提示
+        if (!StringUtils.hasText(token)) {
+            throw new RuntimeException();
+        }
+
+        System.out.println("token==>:" + token);
+        //6 执行业务方法
+        return proceedingJoinPoint.proceed();
+    }
+    
+}
+
+```
+
+
+
+jwt+拦截器设置
+
+
+
+文件上传操作
